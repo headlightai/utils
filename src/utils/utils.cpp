@@ -185,28 +185,6 @@ void Utils::savePointcloud(const pcl::PointCloud<pcl::PointXYZI>& cloud,
   ++j_;
 }
 
-void Utils::savePointcloud(const pcl::PointCloud<pcl::PointXYZI>& cloud,
-                           const std::string& save_directory, const std::string& name) {
-  makeDirectory(save_directory);
-  std::string save_name = save_directory + name + ".pcd";
-  if (!cloud.empty()) {
-    try {
-      writer_.writeBinary(save_name, cloud);
-    } catch (const std::exception& e) {
-      std::cerr << e.what() << '\n';
-    }
-  }
-}
-
-void Utils::savePointcloud(const pcl::PointCloud<pcl::PointNormal>& cloud,
-                           const std::string& save_directory, const std::string& name) {
-  makeDirectory(save_directory);
-  std::string save_name = save_directory + name + ".pcd";
-  if (!cloud.empty()) {
-    writer_.writeBinary(save_name, cloud);
-  }
-}
-
 void Utils::laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan,
                                    sensor_msgs::msg::PointCloud2& lasercloud) {
   projector_.projectLaser(laserscan, lasercloud);  // convert laserscan to pointcloud

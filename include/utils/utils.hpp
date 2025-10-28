@@ -1,5 +1,8 @@
 #pragma once
 
+#include "custom_pcl_pointxyzrgbi.hpp"
+#include <pcl/impl/point_types.hpp>
+
 #include <filesystem>  // or #include <filesystem> for C++17 and up
 #include <iomanip>     // for std::setw and std::setfill
 #include <regex>
@@ -77,9 +80,9 @@ class Utils {
   void savePointcloud(const pcl::PointCloud<pcl::PointXYZI>& cloud);
   void savePointcloud(const pcl::PointCloud<pcl::PointXYZI>& cloud,
                       const std::string& save_directory);
-  void savePointcloud(const pcl::PointCloud<pcl::PointXYZI>& cloud,
-                      const std::string& save_directory, const std::string& name);
-  void savePointcloud(const pcl::PointCloud<pcl::PointNormal>& cloud,
+  
+  template <typename PointT>
+  void savePointcloud(const PointT& cloud,
                       const std::string& save_directory, const std::string& name);
 
   void makeDirectory(const std::string& directory);
@@ -131,4 +134,18 @@ class Utils {
 
   pcl::PointCloud<pcl::PointXYZI>::Ptr mls_cloud_;
 };
+
+template <typename PointT>
+void Utils::savePointcloud(const PointT& cloud,
+                      const std::string& save_directory, const std::string& name) {
+  makeDirectory(save_directory);
+  std::string save_name = save_directory + name + ".pcd";
+  if (!cloud.empty()) {
+    try {
+      writer_.writeBinary(save_name, cloud);
+    } catch (const std::exception& e) {
+      std::cerr << e.what() << '\n';
+    }
+  }
+}
 }  // namespace utils
