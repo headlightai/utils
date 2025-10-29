@@ -40,7 +40,7 @@ void PointcloudFromLaserscan::pointcloudFromLaserscan() {
       std::string datetime_str = oss.str();
 
       auto pc_msg = utilities_->laserscanToPointcloud2(ls);
-      utilities_->convertRos2Pcl(pc_msg, pcl_cloud_);
+      utilities_->convertRos2Pcl<pcl::PointXYZI>(pc_msg, pcl_cloud_);
       utilities_->savePointcloud(*pcl_cloud_, params_.save_directory_, datetime_str);
     }
   }
