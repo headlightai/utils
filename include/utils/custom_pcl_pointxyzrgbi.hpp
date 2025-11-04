@@ -17,7 +17,7 @@ struct EIGEN_ALIGN16 PointXYZRGBI {
   float intensity;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-} EIGEN_ALIGN16;
+};
 }  // namespace pcl
 
 // Register the struct with PCL (names in parenthesis must match member names)
