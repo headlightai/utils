@@ -1,0 +1,5 @@
+string disk
+string[] files
+---
+bool success
+string message

@@ -17,18 +17,24 @@ find_package(yaml-cpp REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 
+find_package(rosidl_default_generators REQUIRED)
+
 include_directories(
   include
   ${OpenCV_INCLUDE_DIRS}
 )
 
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/DownloadMediaFiles.srv"
+)
+
 ##########
-add_library(utils SHARED src/utils/utils.cpp)
-ament_target_dependencies(utils
+add_library(utils_lib SHARED src/utils/utils.cpp)
+ament_target_dependencies(utils_lib
   "laser_geometry"
   "pcl_ros"
 )
-target_include_directories(utils PUBLIC
+target_include_directories(utils_lib PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
@@ -51,9 +57,9 @@ ament_target_dependencies(ros2bag_reader
 )
 install(
   TARGETS 
-    utils
+    utils_lib
     ros2bag_reader
-  EXPORT utils               
+  EXPORT utils_lib
   LIBRARY DESTINATION lib/${PROJECT_NAME}
   ARCHIVE DESTINATION lib/${PROJECT_NAME}
 )
@@ -90,7 +96,7 @@ ament_target_dependencies(pointcloud_from_laserscans
 target_link_libraries(pointcloud_from_laserscans
   ros2bag_reader
   yaml-cpp::yaml-cpp
-  utils
+  utils_lib
 )
 install(TARGETS
   pointcloud_from_laserscans 
@@ -114,6 +120,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_targets(utils HAS_LIBRARY_TARGET)
+ament_export_dependencies(rosidl_default_runtime)
+ament_export_targets(utils_lib HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
 ament_package()
