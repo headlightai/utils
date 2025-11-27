@@ -25,6 +25,7 @@ include_directories(
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/DeleteMediaFiles.srv"
   "srv/DownloadMediaFiles.srv"
 )
 

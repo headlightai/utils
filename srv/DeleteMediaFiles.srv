@@ -1,0 +1,4 @@
+string[] files
+---
+bool success
+string message
