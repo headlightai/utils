@@ -44,7 +44,7 @@ std::vector<T> Ros2bagReader::readMsg(const std::string& bag_folder, const std::
      array and returns it.
   */
   storage_options_.uri = bag_folder;
-  storage_options_.storage_id = "sqlite3";
+  storage_options_.storage_id = "";
   reader_ = rosbag2_transport::ReaderWriterFactory::make_reader(storage_options_);
   std::cout << "Trying to open bag at path: " << bag_folder << std::endl;
   reader_->open(storage_options_);

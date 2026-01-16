@@ -156,20 +156,20 @@ void Utils::filterPointCloud(const sensor_msgs::msg::PointCloud2& cloud_in,
                              const std::string& filter_name) {
   // Radius filter: remove points which are outside a sphere of radius `outlier_radius_`
   typename pcl::PointCloud<PointT>::Ptr pcl_pointcloud(new pcl::PointCloud<PointT>);
-  convertRos2Pcl(cloud_in, pcl_pointcloud);
+  convertRos2Pcl<PointT>(cloud_in, pcl_pointcloud);
   std::vector<int> indices;
   pcl::removeNaNFromPointCloud(*pcl_pointcloud, *pcl_pointcloud, indices);
 
   if (filter_name == "cropbox") {
-    cropBoxFilter(pcl_pointcloud, cloud_out);
+    cropBoxFilter<PointT>(pcl_pointcloud, cloud_out);
   } else if (filter_name == "voxel") {
-    voxelGridFilter(pcl_pointcloud, cloud_out);
+    voxelGridFilter<PointT>(pcl_pointcloud, cloud_out);
   } else if (filter_name == "sor") {
-    statisticalOutlierRemoval(pcl_pointcloud, cloud_out);
+    statisticalOutlierRemoval<PointT>(pcl_pointcloud, cloud_out);
   } else if (filter_name == "distance") {
-    distanceFilter(pcl_pointcloud, cloud_out);
+    distanceFilter<PointT>(pcl_pointcloud, cloud_out);
   } else if (filter_name == "mls") {
-    movingLeastSquares(pcl_pointcloud, cloud_out);
+    movingLeastSquares<PointT>(pcl_pointcloud, cloud_out);
   }
 }
 
@@ -178,8 +178,8 @@ void Utils::filterPointCloud(const typename pcl::PointCloud<PointT>::Ptr& cloud_
                              sensor_msgs::msg::PointCloud2& cloud_out_ros,
                              const std::string& filter_name) {
   typename pcl::PointCloud<PointT>::Ptr cloud_out(new pcl::PointCloud<PointT>);
-  filterPointCloud(cloud_in, cloud_out, filter_name);
-  convertPcl2Ros(cloud_out, cloud_out_ros);
+  filterPointCloud<PointT>(cloud_in, cloud_out, filter_name);
+  convertPcl2Ros<PointT>(cloud_out, cloud_out_ros);
 }
 
 template <typename PointT>
@@ -190,15 +190,15 @@ void Utils::filterPointCloud(const typename pcl::PointCloud<PointT>::Ptr& cloud_
   pcl::removeNaNFromPointCloud(*cloud_in, *cloud_in, indices);
 
   if (filter_name == "cropbox") {
-    cropBoxFilter(cloud_in, cloud_out);
+    cropBoxFilter<PointT>(cloud_in, cloud_out);
   } else if (filter_name == "voxel") {
-    voxelGridFilter(cloud_in, cloud_out);
+    voxelGridFilter<PointT>(cloud_in, cloud_out);
   } else if (filter_name == "sor") {
-    statisticalOutlierRemoval(cloud_in, cloud_out);
+    statisticalOutlierRemoval<PointT>(cloud_in, cloud_out);
   } else if (filter_name == "distance") {
-    distanceFilter(cloud_in, cloud_out);
+    distanceFilter<PointT>(cloud_in, cloud_out);
   } else if (filter_name == "mls") {
-    movingLeastSquares(cloud_in, cloud_out);
+    movingLeastSquares<PointT>(cloud_in, cloud_out);
   }
 }
 
@@ -218,7 +218,7 @@ void Utils::savePointcloud(const pcl::PointCloud<PointT>& cloud, const std::stri
                            const std::string& name) {
   makeDirectory(save_directory);
   std::string save_name = save_directory + name + ".pcd";
-  cloudSave(save_name, cloud);
+  cloudSave<PointT>(save_name, cloud);
 }
 
 template <typename PointT>
@@ -226,7 +226,7 @@ void Utils::savePointcloud(const pcl::PointCloud<PointT>& cloud) {
   std::ostringstream ss;
   ss << std::setw(5) << std::setfill('0') << i_;
   std::string save_name = params_.save_directory_ + "pcd_map_" + ss.str() + ".pcd";
-  cloudSave(save_name, cloud);
+  cloudSave<PointT>(save_name, cloud);
   ++i_;
   // pcl::io::savePCDFileASCII (save_name, cloud);
 }
@@ -238,7 +238,7 @@ void Utils::savePointcloud(const pcl::PointCloud<PointT>& cloud,
   std::ostringstream ss;
   ss << std::setw(5) << std::setfill('0') << j_;
   std::string save_name = save_directory + "reg_pcds_" + ss.str() + ".pcd";
-  cloudSave(save_name, cloud);
+  cloudSave<PointT>(save_name, cloud);
   ++j_;
 }
 
