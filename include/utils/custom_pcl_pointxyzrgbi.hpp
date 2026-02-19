@@ -12,22 +12,16 @@
 */
 namespace pcl {
 struct EIGEN_ALIGN16 PointXYZRGBI {
-  PCL_ADD_POINT4D;  // adds float x,y,z and padding (data[4])
-  PCL_ADD_RGB
-  float intensity;
+    PCL_ADD_POINT4D;  // adds float x,y,z and padding (data[4])
+    PCL_ADD_RGB
+    float intensity;
 
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 }  // namespace pcl
 
 // Register the struct with PCL (names in parenthesis must match member names)
-POINT_CLOUD_REGISTER_POINT_STRUCT(
-  pcl::PointXYZRGBI,
-  (float, x, x)
-  (float, y, y)
-  (float, z, z)
-  (float, rgb, rgb)
-  (float, intensity, intensity)
-)
+POINT_CLOUD_REGISTER_POINT_STRUCT(pcl::PointXYZRGBI,
+                                  (float, x, x)(float, y, y)(float, z, z)(float, rgb, rgb)(float, intensity, intensity))
 
 // #define PCL_INSTANTIATE_KEYWORD(PointXYZRGBI)
