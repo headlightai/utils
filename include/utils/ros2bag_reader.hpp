@@ -15,23 +15,27 @@
 
 namespace readbag {
 class Ros2bagReader {
- public:
-  typedef std::shared_ptr<Ros2bagReader> Ptr;
+  public:
+    typedef std::shared_ptr<Ros2bagReader> Ptr;
 
-  Ros2bagReader();
+    Ros2bagReader();
 
-  ~Ros2bagReader() = default;
+    ~Ros2bagReader() = default;
 
-  template <typename T>
-  std::vector<T> readMsg(const std::string& bag_folder, const std::string& topic_name,
-                         const int& nth = 1);
+    template <typename T>
+    std::vector<T> readMsg(const std::string& bag_folder, const std::string& topic_name,
+                            const int& nth = 1);
 
-  std::vector<std::string> getBagFiles(const std::string& root_folder);
+    std::vector<std::string> getBagFiles(const std::string& root_folder);
 
- private:
-  std::unique_ptr<rosbag2_cpp::Reader> reader_;
+    std::size_t getMessageCount(const std::string &bag_filepath, const std::string &topic_name, const std::size_t &nth = 1);
 
-  rosbag2_storage::StorageOptions storage_options_;
+    std::size_t getTotalMessageCount(const std::string &bag_folder, const std::string &topic_name, const std::size_t &nth = 1);
+
+  private:
+    std::unique_ptr<rosbag2_cpp::Reader> reader_;
+
+    rosbag2_storage::StorageOptions storage_options_;
 };
 
 template <typename T>
