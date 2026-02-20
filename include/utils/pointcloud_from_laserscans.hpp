@@ -18,25 +18,25 @@
 
 namespace pcd_from_laserscan {
 class PointcloudFromLaserscan {
- public:
-  typedef std::shared_ptr<PointcloudFromLaserscan> Ptr;
-  PointcloudFromLaserscan();
-  ~PointcloudFromLaserscan() = default;
+   public:
+    typedef std::shared_ptr<PointcloudFromLaserscan> Ptr;
+    PointcloudFromLaserscan();
+    ~PointcloudFromLaserscan() = default;
 
- private:
-  readbag::Ros2bagReader::Ptr ros2bag_reader_;
+   private:
+    readbag::Ros2bagReader::Ptr ros2bag_reader_;
 
-  utils::UtilParams params_;
-  utils::Utils::Ptr utilities_;
+    utils::UtilParams params_;
+    utils::Utils::Ptr utilities_;
 
-  YAML::Node config_;
+    YAML::Node config_;
 
-  std::vector<std::string> bag_folders_;
-  std::string save_directory_, bag_root_folder_, laserscan_topic_, yaml_dir_;
+    std::vector<std::string> bag_folders_;
+    std::string save_directory_, bag_root_folder_, laserscan_topic_, yaml_dir_;
 
-  std::vector<sensor_msgs::msg::LaserScan> laserscans_;
-  pcl::PointCloud<pcl::PointXYZI>::Ptr pcl_cloud_;
+    std::vector<sensor_msgs::msg::LaserScan> laserscans_;
+    pcl::PointCloud<pcl::PointXYZI>::Ptr pcl_cloud_;
 
-  void pointcloudFromLaserscan();
+    void pointcloudFromLaserscan();
 };
 }  // namespace pcd_from_laserscan
