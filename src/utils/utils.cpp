@@ -23,6 +23,7 @@ void Utils::makeDirectory(const std::string& directory) {
   }
 }
 
+#ifdef USE_LASER_GEOMETRY
 void Utils::laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan,
                                    sensor_msgs::msg::PointCloud2& lasercloud) {
   projector_.projectLaser(laserscan, lasercloud);  // convert laserscan to pointcloud
@@ -35,6 +36,7 @@ Utils::laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan) {
 
   return lasercloud;
 }
+#endif
 
 geometry_msgs::msg::Quaternion
 Utils::multiplyQuaternions(const geometry_msgs::msg::Quaternion& q1,
