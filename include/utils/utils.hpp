@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <geometry_msgs/msg/quaternion.hpp>
+#include <pcl/impl/point_types.hpp>
 #include <pcl_ros/transforms.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
