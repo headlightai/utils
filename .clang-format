@@ -6,12 +6,12 @@ BasedOnStyle: Google
 Language: Cpp
 
 # Indentation style
-IndentWidth: 2
+IndentWidth: 4
 TabWidth: 2
 UseTab: Never
 
 # Line length
-ColumnLimit: 100
+ColumnLimit: 120
 
 # Continuation indent (for broken lines)
 ContinuationIndentWidth: 4

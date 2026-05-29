@@ -14,23 +14,23 @@
 
 namespace video_from_rosbag {
 class VideoFromRosbag {
- public:
-  typedef std::shared_ptr<VideoFromRosbag> Ptr;
-  VideoFromRosbag();
-  ~VideoFromRosbag() = default;
+   public:
+    typedef std::shared_ptr<VideoFromRosbag> Ptr;
+    VideoFromRosbag();
+    ~VideoFromRosbag() = default;
 
- private:
-  readbag::Ros2bagReader::Ptr ros2bag_reader_;
-  cv_bridge::CvImagePtr cv_ptr_;
+   private:
+    readbag::Ros2bagReader::Ptr ros2bag_reader_;
+    cv_bridge::CvImagePtr cv_ptr_;
 
-  YAML::Node config_;
+    YAML::Node config_;
 
-  std::vector<std::string> bag_folders_;
-  std::string save_directory_, bag_root_folder_, image_topic_, yaml_dir_;
+    std::vector<std::string> bag_folders_;
+    std::string save_directory_, bag_root_folder_, image_topic_, yaml_dir_;
 
-  std::vector<sensor_msgs::msg::Image> ros_images_;
-  int fps_;
+    std::vector<sensor_msgs::msg::Image> ros_images_;
+    int fps_;
 
-  bool convertBagToVideo();
+    bool convertBagToVideo();
 };
 }  // namespace video_from_rosbag
