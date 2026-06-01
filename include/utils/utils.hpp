@@ -10,7 +10,6 @@
 #include <vector>
 
 #include <geometry_msgs/msg/quaternion.hpp>
-#include <laser_geometry/laser_geometry.hpp>
 #include <pcl/impl/point_types.hpp>
 #include <pcl_ros/transforms.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
@@ -27,6 +26,9 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
+#ifdef USE_LASER_GEOMETRY
+  #include <laser_geometry/laser_geometry.hpp>
+#endif
 namespace utils {
 struct UtilParams {
     // Default constructor with default values
@@ -62,8 +64,12 @@ class Utils {
 
     ~Utils() = default;
 
+  #ifdef USE_LASER_GEOMETRY
     void laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan,
                                 sensor_msgs::msg::PointCloud2& pointcloud);
+    sensor_msgs::msg::PointCloud2
+    laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan);
+  #endif
 
     sensor_msgs::msg::PointCloud2 laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan);
 
@@ -142,7 +148,9 @@ class Utils {
 
     int i_, j_;
 
+  #ifdef USE_LASER_GEOMETRY
     laser_geometry::LaserProjection projector_;
+  #endif
 
     pcl::PCDWriter writer_;
 };
