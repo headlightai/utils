@@ -71,8 +71,6 @@ class Utils {
     laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan);
   #endif
 
-    sensor_msgs::msg::PointCloud2 laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan);
-
     template <typename PointT>
     void filterPointCloud(const sensor_msgs::msg::PointCloud2& cloud_in,
                           typename pcl::PointCloud<PointT>::Ptr& cloud_out, const std::string& filter_name = "voxel");
