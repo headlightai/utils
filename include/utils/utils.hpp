@@ -337,7 +337,7 @@ template <typename PointT>
 void Utils::cropBoxFilter(const typename pcl::PointCloud<PointT>::Ptr& cloud_in,
                           typename pcl::PointCloud<PointT>::Ptr& cloud_out) {
     pcl::CropBox<PointT> cropbox_filter(true);
-    cropbox_filter.setNegative(true);
+    cropbox_filter.setNegative(false);
     cropbox_filter.setInputCloud(cloud_in);
     Eigen::Vector4f min_pt(params_.cropbox_min_[0], params_.cropbox_min_[1], params_.cropbox_min_[2], 1.0);
     Eigen::Vector4f max_pt(params_.cropbox_max_[0], params_.cropbox_max_[1], params_.cropbox_max_[2], 1.0);
