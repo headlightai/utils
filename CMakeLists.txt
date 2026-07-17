@@ -9,7 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pcl_ros REQUIRED)
-find_package(laser_geometry REQUIRED)
+find_package(laser_geometry)
 find_package(rosbag2_cpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rosbag2_transport REQUIRED)
@@ -25,13 +25,20 @@ include_directories(
 ##########
 add_library(utils SHARED src/utils/utils.cpp)
 ament_target_dependencies(utils
-  "laser_geometry"
   "pcl_ros"
 )
 target_include_directories(utils PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
+if(laser_geometry_FOUND)
+  ament_target_dependencies(utils "laser_geometry")
+  # This makes the USE_LASER_GEOMETRY macro available to utils.cpp 
+  # AND anything else that includes utils.hpp
+  target_compile_definitions(utils PUBLIC USE_LASER_GEOMETRY)
+else()
+  message(WARNING "laser_geometry not found! Building Utils without laser projection support.")
+endif()
 install(DIRECTORY include/
   DESTINATION include/
 )
@@ -114,6 +121,18 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+set(utils_EXPORT_DEPENDENCIES
+  "pcl_ros"
+  "rclcpp"
+  "rosbag2_cpp"
+  "sensor_msgs"
+  "rosbag2_transport"
+)
+if(laser_geometry_FOUND)
+  list(APPEND utils_EXPORT_DEPENDENCIES "laser_geometry")
+endif()
+
 ament_export_targets(utils HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
+ament_export_dependencies(${utils_EXPORT_DEPENDENCIES})
 ament_package()
