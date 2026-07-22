@@ -27,6 +27,8 @@ class Ros2bagReader {
 
     std::vector<std::string> getBagFiles(const std::string& root_folder);
 
+    std::vector<std::string> getBagFileNamesFromMetadata(const std::string& root_folder);
+
     std::size_t getMessageCount(const std::string& bag_filepath, const std::string& topic_name,
                                 const std::size_t& nth = 1);
 
