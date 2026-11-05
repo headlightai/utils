@@ -12,6 +12,7 @@
 #include <rosbag2_cpp/converter_options.hpp>
 #include <rosbag2_cpp/readers/sequential_reader.hpp>
 #include <rosbag2_cpp/typesupport_helpers.hpp>
+#include <rosbag2_storage/bag_metadata.hpp>
 #include <rosbag2_storage/storage_options.hpp>
 #include <rosbag2_transport/reader_writer_factory.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
@@ -40,6 +41,8 @@ class Ros2bagReader {
     std::vector<std::string> getBagFiles(const std::string& root_folder);
 
     std::vector<std::string> getBagFileNamesFromMetadata(const std::string& root_folder);
+
+    rosbag2_storage::BagMetadata getBagMetadata(const std::string& bag_folder);
 
     std::size_t getMessageCount(const std::string& bag_filepath, const std::string& topic_name,
                                 const std::size_t& nth = 1);

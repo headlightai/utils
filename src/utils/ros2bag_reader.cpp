@@ -58,6 +58,10 @@ std::vector<std::string> Ros2bagReader::getBagFileNamesFromMetadata(const std::s
     return bag_file_names;
 }
 
+rosbag2_storage::BagMetadata Ros2bagReader::getBagMetadata(const std::string& bag_folder) {
+    return rosbag2_storage::MetadataIo().read_metadata(bag_folder);
+}
+
 std::size_t Ros2bagReader::getMessageCount(const std::string& bag_filepath, const std::string& topic_name,
                                            const std::size_t& nth) {
     if (nth <= 0) {
