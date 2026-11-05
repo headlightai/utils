@@ -1,6 +1,9 @@
 #pragma once
 
 #include <filesystem>
+#include <iostream>
+#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -14,6 +17,12 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 
 namespace readbag {
+template <typename T>
+struct StampedMsg {
+    T msg;
+    int64_t stamp_ns;  // bag send timestamp (nanoseconds); equals the receive timestamp if unavailable
+};
+
 class Ros2bagReader {
    public:
     typedef std::shared_ptr<Ros2bagReader> Ptr;
@@ -24,6 +33,9 @@ class Ros2bagReader {
 
     template <typename T>
     std::vector<T> readMsg(const std::string& bag_folder, const std::string& topic_name, const int& nth = 1);
+
+    template <typename T>
+    std::optional<StampedMsg<T>> readFirstMsg(const std::string& bag_folder, const std::string& topic_name);
 
     std::vector<std::string> getBagFiles(const std::string& root_folder);
 
@@ -52,9 +64,7 @@ std::vector<T> Ros2bagReader::readMsg(const std::string& bag_folder, const std::
     storage_options_.uri = bag_folder;
     storage_options_.storage_id = "";
     reader_ = rosbag2_transport::ReaderWriterFactory::make_reader(storage_options_);
-    std::cout << "Trying to open bag at path: " << bag_folder << std::endl;
     reader_->open(storage_options_);
-    std::cout << "Opened: " << bag_folder << std::endl;
 
     std::vector<T> msg_array;
     int message_count = 0;
@@ -74,8 +84,30 @@ std::vector<T> Ros2bagReader::readMsg(const std::string& bag_folder, const std::
             message_count++;
         }
     }
-    std::cout << "\033[1;33m finished reading bag msg \033[0m\n";  // print out in yellow
-    std::cout << "\033[0 \033[0m\n";                               // back to normal text
     return msg_array;
+}
+
+template <typename T>
+std::optional<StampedMsg<T>> Ros2bagReader::readFirstMsg(const std::string& bag_folder, const std::string& topic_name) {
+    /*
+        Returns the first msg on topic_name in the bag along with its send timestamp, or std::nullopt
+        if the topic has no msgs. Stops reading as soon as the msg is found.
+    */
+    storage_options_.uri = bag_folder;
+    storage_options_.storage_id = "";
+    reader_ = rosbag2_transport::ReaderWriterFactory::make_reader(storage_options_);
+    reader_->open(storage_options_);
+
+    rclcpp::Serialization<T> serialization;
+    while (reader_->has_next()) {
+        const auto msg = reader_->read_next();
+        if (msg->topic_name == topic_name) {
+            rclcpp::SerializedMessage serialized_msg(*msg->serialized_data);
+            StampedMsg<T> stamped{T{}, msg->send_timestamp};
+            serialization.deserialize_message(&serialized_msg, &stamped.msg);
+            return stamped;
+        }
+    }
+    return std::nullopt;
 }
 }  // namespace readbag
