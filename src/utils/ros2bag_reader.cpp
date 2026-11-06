@@ -97,4 +97,12 @@ std::size_t Ros2bagReader::getTotalMessageCount(const std::string& bag_folder, c
 
     return total;
 }
+
+int64_t Ros2bagReader::getBagDuration(const std::string& bag_file) {
+    rosbag2_storage::StorageOptions storage_options;
+    storage_options.uri = bag_file;
+    auto reader = rosbag2_transport::ReaderWriterFactory::make_reader(storage_options);
+    reader->open(storage_options);
+    return reader->get_metadata().duration.count();
+}
 }  // namespace readbag

@@ -50,6 +50,8 @@ class Ros2bagReader {
     std::size_t getTotalMessageCount(const std::string& bag_folder, const std::string& topic_name,
                                      const std::size_t& nth = 1);
 
+    int64_t getBagDuration(const std::string& bag_file);
+
    private:
     std::unique_ptr<rosbag2_cpp::Reader> reader_;
 
