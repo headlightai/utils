@@ -58,6 +58,10 @@ std::vector<std::string> Ros2bagReader::getBagFileNamesFromMetadata(const std::s
     return bag_file_names;
 }
 
+rosbag2_storage::BagMetadata Ros2bagReader::getBagMetadata(const std::string& bag_folder) {
+    return rosbag2_storage::MetadataIo().read_metadata(bag_folder);
+}
+
 std::size_t Ros2bagReader::getMessageCount(const std::string& bag_filepath, const std::string& topic_name,
                                            const std::size_t& nth) {
     if (nth <= 0) {
@@ -92,5 +96,13 @@ std::size_t Ros2bagReader::getTotalMessageCount(const std::string& bag_folder, c
     }
 
     return total;
+}
+
+int64_t Ros2bagReader::getBagDuration(const std::string& bag_file) {
+    rosbag2_storage::StorageOptions storage_options;
+    storage_options.uri = bag_file;
+    auto reader = rosbag2_transport::ReaderWriterFactory::make_reader(storage_options);
+    reader->open(storage_options);
+    return reader->get_metadata().duration.count();
 }
 }  // namespace readbag
