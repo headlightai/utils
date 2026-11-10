@@ -2,6 +2,7 @@
 
 #include "custom_pcl_pointxyzrgbi.hpp"
 
+#include <Eigen/Geometry>
 #include <filesystem>  // or #include <filesystem> for C++17 and up
 #include <iomanip>     // for std::setw and std::setfill
 #include <regex>
@@ -15,6 +16,7 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include <pcl/common/transforms.h>
 #include <pcl/filters/crop_box.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/voxel_grid.h>
@@ -27,7 +29,7 @@
 #include <tf2_ros/transform_listener.h>
 
 #ifdef USE_LASER_GEOMETRY
-  #include <laser_geometry/laser_geometry.hpp>
+#include <laser_geometry/laser_geometry.hpp>
 #endif
 namespace utils {
 struct UtilParams {
@@ -64,12 +66,17 @@ class Utils {
 
     ~Utils() = default;
 
-  #ifdef USE_LASER_GEOMETRY
+#ifdef USE_LASER_GEOMETRY
     void laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan,
                                 sensor_msgs::msg::PointCloud2& pointcloud);
-    sensor_msgs::msg::PointCloud2
-    laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan);
-  #endif
+    sensor_msgs::msg::PointCloud2 laserscanToPointcloud2(const sensor_msgs::msg::LaserScan& laserscan);
+
+    // Projects a laserscan to a PCL cloud and applies a rotation-only transform (identity by default).
+    template <typename PointT>
+    typename pcl::PointCloud<PointT>::Ptr
+    laserscanToPCLWithRotation(const sensor_msgs::msg::LaserScan& laserscan,
+                               const Eigen::Matrix3f& rotation = Eigen::Matrix3f::Identity());
+#endif
 
     template <typename PointT>
     void filterPointCloud(const sensor_msgs::msg::PointCloud2& cloud_in,
@@ -146,9 +153,9 @@ class Utils {
 
     int i_, j_;
 
-  #ifdef USE_LASER_GEOMETRY
+#ifdef USE_LASER_GEOMETRY
     laser_geometry::LaserProjection projector_;
-  #endif
+#endif
 
     pcl::PCDWriter writer_;
 };
@@ -252,6 +259,21 @@ void Utils::convertPcl2Ros(const typename pcl::PointCloud<PointT>::Ptr& cloud_in
                            sensor_msgs::msg::PointCloud2& cloud_out) {
     pcl::toROSMsg(*cloud_in, cloud_out);
 }
+
+#ifdef USE_LASER_GEOMETRY
+template <typename PointT>
+typename pcl::PointCloud<PointT>::Ptr Utils::laserscanToPCLWithRotation(const sensor_msgs::msg::LaserScan& laserscan,
+                                                                        const Eigen::Matrix3f& rotation) {
+    typename pcl::PointCloud<PointT>::Ptr scan_cloud(new pcl::PointCloud<PointT>);
+    convertRos2Pcl<PointT>(laserscanToPointcloud2(laserscan), scan_cloud);
+
+    Eigen::Affine3f rotate_only = Eigen::Affine3f::Identity();
+    rotate_only.linear() = rotation;
+    typename pcl::PointCloud<PointT>::Ptr rotated_cloud(new pcl::PointCloud<PointT>);
+    pcl::transformPointCloud(*scan_cloud, *rotated_cloud, rotate_only);
+    return rotated_cloud;
+}
+#endif
 
 template <typename PointT>
 std::vector<typename pcl::PointCloud<PointT>::Ptr> Utils::loadPCDs(const std::string& folder_path) {

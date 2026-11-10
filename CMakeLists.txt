@@ -16,6 +16,7 @@ find_package(rosbag2_transport REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 include_directories(
   include
@@ -23,9 +24,13 @@ include_directories(
 )
 
 ##########
-add_library(utils SHARED src/utils/utils.cpp)
+add_library(utils SHARED 
+  src/utils/utils.cpp
+  src/utils/eigen.cpp
+)
 ament_target_dependencies(utils
   "pcl_ros"
+  "Eigen3"
 )
 target_include_directories(utils PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
